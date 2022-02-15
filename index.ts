@@ -4,8 +4,11 @@ import * as aws from "@pulumi/aws";
 
 const buildConfig = require("./build-config.json");
 
+// Set parameters
+const instanceType = "t3.large";
+
 // Base Windows AMI (copied from EC2ImageBuilder.ts). This is used in an image recipe
-const windowsBaseAmiResult = pulumi.output(aws.ec2.getAmi({
+const windowsBaseAmiResult = aws.ec2.getAmi({
   filters: [
     { name: "architecture", values: ["x86_64"], },
     { name: "platform", values: ["windows"], },
@@ -16,23 +19,9 @@ const windowsBaseAmiResult = pulumi.output(aws.ec2.getAmi({
   mostRecent: true,
   owners: ["amazon"],
   nameRegex: "^Windows_Server-2019-English-Full-Base-\\d{4}\\.\\d{2}\\.\\d{2}"
-},));
+},);
 
-// Create test build component
-const testBuildComponent = new aws.imagebuilder.Component(
-  "testTrivialBuildComponent",
-  {
-      platform: "Windows",
-      version: "0.0.1",
-      data: JSON.stringify(buildConfig)
-  }
-);
-
-// Create Image Recipe
-const imageRecipe= new aws.imagebuilder.ImageRecipe(`test-image-recipe`, {
-  parentImage: windowsBaseAmiResult.imageId,
-  components: [{
-    componentArn: testBuildComponent.arn
-  }],
-  version: "0.0.1"
-}, { deleteBeforeReplace: true });
+const web = new aws.ec2.Instance("windows-machine", {
+  ami: windowsBaseAmiResult.then(windowsBaseAmiResult => windowsBaseAmiResult.id),
+  instanceType: instanceType
+});
