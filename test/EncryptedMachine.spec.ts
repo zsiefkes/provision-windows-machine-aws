@@ -52,7 +52,7 @@ describe("Encrypted machines", function checkEncryptedMachine() {
     }, {});
   });
 
-  describe("the virtual machine", function checkCommonConfig() {
+  describe("the virtual machine", function checkMachineConfig() {
     it("should exist", async function instanceExists() {
       expect(machine.instance.id).to.exist;
     });
@@ -62,7 +62,6 @@ describe("Encrypted machines", function checkEncryptedMachine() {
     });
 
     it("should be in region ap-southeast-2", async function instanceRegion() {
-      return;
     });
 
     it("should have an encrypted file system", async function encryptedAtRest() {
@@ -70,13 +69,11 @@ describe("Encrypted machines", function checkEncryptedMachine() {
     });
 
     it("should be in a public subnet", async function publicSubnet() {
-      return;
     });
+  });
 
-
-
+  describe("the vm constructor", function checkOutputs() {
     it("should output an IP address", async function outputIpAddress() {
-      return;
     });
   });
 });
